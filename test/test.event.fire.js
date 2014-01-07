@@ -72,11 +72,10 @@ suite('Events#fire()', function(){
     emitter.on('eventname', callback2);
     emitter.fire('eventname');
 
-    // TODO: Check Sinon docs for API to do this
-    //assert.callOrder(callback1, callback2);
+		callback1.calledBefore(callback2);
   });
 
-  test('Should able to define the context on which to fire', function() {
+  test('Should be able to define the context on which to fire', function() {
     var emitter = new Events();
     var ctx = { overriden: 'context' };
     var callback1 = sinon.spy();
@@ -87,5 +86,16 @@ suite('Events#fire()', function(){
     });
 
     emitter.fire({ name: 'eventname', ctx: ctx });
+  });
+
+  test('Should be able to stop further events firing by returning false from callback', function() {
+    var emitter = new Events();
+		var callback = sinon.stub().returns(false);
+
+    emitter.on('eventname', callback);
+    emitter.on('eventname', callback);
+
+    emitter.fire('eventname');
+    assert(callback.calledOnce);
   });
 });

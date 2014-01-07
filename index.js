@@ -91,6 +91,7 @@ proto.off = function(name, cb) {
  */
 proto.fire = function(options) {
   this._cbs = this._cbs || {};
+	var ret;
   var name = options.name || options;
   var ctx = options.ctx || this;
   var cbs = this._cbs[name];
@@ -102,7 +103,10 @@ proto.fire = function(options) {
 
     while (cbs.length) {
       cb = cbs.shift();
-      cb.apply(ctx, args);
+      ret = cb.apply(ctx, args);
+			if(ret === false) {
+				break;
+			}
       run.push(cb);
     }
 
